@@ -6,7 +6,8 @@ pool:
   
 variables:
   projectName: WeatherForecast
-  
+  isMaster: $[eq(variables['Build.SourceBranch'], 'refs/heads/master')]
+
 stages:
 - stage: CI
   displayName: CI
@@ -85,3 +86,89 @@ stages:
               IISDeploymentType: 'IISWebsite'
               ActionIISWebsite: 'StartWebsite'
               StartStopWebsiteName: 'dev.WeatherForecast'
+
+- stage: DeployToQA
+  displayName: QA
+  jobs:
+  - deployment: deploymentJob
+    displayName: Deployment job
+    environment:
+      name: QA
+      resourceType: VirtualMachine
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: IISWebAppManagementOnMachineGroup@0
+            inputs:
+              IISDeploymentType: 'IISWebsite'
+              ActionIISWebsite: 'CreateOrUpdateWebsite'
+              WebsiteName: 'qa.WeatherForecast'
+              websitePhysicalPath: '%SystemDrive%\Sites\qa.$(projectName)'
+              AddBinding: true
+              bindings: '{"bindings":[{"protocol":"http","ipAddress":"All Unassigned","port":"80","hostname":"www.qa.$(projectName).pt","sslThumbprint":"","sniFlag":false}]}'
+              WebsitePhysicalPathAuth: 'WebsiteUserPassThrough'
+              CreateOrUpdateAppPoolForWebsite: true
+              AppPoolNameForWebsite: 'qa.WeatherForecast'
+              DotNetVersionForWebsite: 'v4.0'
+              PipeLineModeForWebsite: 'Integrated'
+              AppPoolIdentityForWebsite: 'ApplicationPoolIdentity'
+          - task: IISWebAppManagementOnMachineGroup@0
+            inputs:
+              IISDeploymentType: 'IISWebsite'
+              ActionIISWebsite: 'StopWebsite'
+              StartStopWebsiteName: 'qa.WeatherForecast'
+          - task: IISWebAppDeploymentOnMachineGroup@0
+            inputs:
+              WebSiteName: 'qa.WeatherForecast'
+              Package: '$(pipeline.workspace)\**\*.zip'
+              RemoveAdditionalFilesFlag: true
+              TakeAppOfflineFlag: true
+          - task: IISWebAppManagementOnMachineGroup@0
+            inputs:
+              IISDeploymentType: 'IISWebsite'
+              ActionIISWebsite: 'StartWebsite'
+              StartStopWebsiteName: 'qa.WeatherForecast'
+              
+- stage: DeployToProd
+  displayName: Prod
+  jobs:
+  - deployment: deploymentJob
+    displayName: Deployment job
+    environment:
+      name: Prod
+      resourceType: VirtualMachine
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: IISWebAppManagementOnMachineGroup@0
+            inputs:
+              IISDeploymentType: 'IISWebsite'
+              ActionIISWebsite: 'CreateOrUpdateWebsite'
+              WebsiteName: 'WeatherForecast'
+              websitePhysicalPath: '%SystemDrive%\Sites\$(projectName)'
+              AddBinding: true
+              bindings: '{"bindings":[{"protocol":"http","ipAddress":"All Unassigned","port":"80","hostname":"www.$(projectName).pt","sslThumbprint":"","sniFlag":false}]}'
+              WebsitePhysicalPathAuth: 'WebsiteUserPassThrough'
+              CreateOrUpdateAppPoolForWebsite: true
+              AppPoolNameForWebsite: 'WeatherForecast'
+              DotNetVersionForWebsite: 'v4.0'
+              PipeLineModeForWebsite: 'Integrated'
+              AppPoolIdentityForWebsite: 'ApplicationPoolIdentity'
+          - task: IISWebAppManagementOnMachineGroup@0
+            inputs:
+              IISDeploymentType: 'IISWebsite'
+              ActionIISWebsite: 'StopWebsite'
+              StartStopWebsiteName: 'WeatherForecast'
+          - task: IISWebAppDeploymentOnMachineGroup@0
+            inputs:
+              WebSiteName: 'WeatherForecast'
+              Package: '$(pipeline.workspace)\**\*.zip'
+              RemoveAdditionalFilesFlag: true
+              TakeAppOfflineFlag: true
+          - task: IISWebAppManagementOnMachineGroup@0
+            inputs:
+              IISDeploymentType: 'IISWebsite'
+              ActionIISWebsite: 'StartWebsite'
+              StartStopWebsiteName: 'WeatherForecast'
