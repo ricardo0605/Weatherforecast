@@ -46,6 +46,8 @@ stages:
 
 - stage: DeployToDev
   displayName: Dev
+  variables:
+    ConnectionStrings.DefaultConnection: $(devConnectionString)
   jobs:
   - deployment: deploymentJob
     displayName: Deployment job
@@ -81,6 +83,12 @@ stages:
               Package: '$(pipeline.workspace)\**\*.zip'
               RemoveAdditionalFilesFlag: true
               TakeAppOfflineFlag: true
+          - task: FileTransform@1
+            displayName: 'File transformation: appsettings.json'
+            inputs:
+              folderPath: '%SystemDrive%\Sites\dev.$(projectName)'
+              targetFiles: '**/appsettings.json'
+              fileType: json
           - task: IISWebAppManagementOnMachineGroup@0
             inputs:
               IISDeploymentType: 'IISWebsite'
