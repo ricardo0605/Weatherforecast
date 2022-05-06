@@ -83,13 +83,7 @@ stages:
               Package: '$(pipeline.workspace)\**\*.zip'
               RemoveAdditionalFilesFlag: true
               TakeAppOfflineFlag: true
-          # Update appsettings.json via FileTransform task.
-          - task: FileTransform@1
-            displayName: 'File transformation: appsettings.json'
-            inputs:
-              folderPath: '%SystemDrive%\Sites\dev.$(projectName)'
-              targetFiles: 'appsettings.json'
-              fileType: json
+              JSONFiles: 'appsettings.json'
           - task: IISWebAppManagementOnMachineGroup@0
             inputs:
               IISDeploymentType: 'IISWebsite'
