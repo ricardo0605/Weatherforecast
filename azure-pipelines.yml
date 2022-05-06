@@ -6,7 +6,6 @@ pool:
   
 variables:
   projectName: WeatherForecast
-  isMaster: $[eq(variables['Build.SourceBranch'], 'refs/heads/master')]
 
 stages:
 - stage: CI
