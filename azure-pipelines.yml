@@ -62,7 +62,7 @@ stages:
           - task: FileTransform@1
             displayName: 'File transformation: appsettings.json'
             inputs:
-              folderPath: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
+              folderPath: '$(build.artifactstagingdirectory)'
               targetFiles: '**/appsettings.json'
               fileType: json
           - task: IISWebAppManagementOnMachineGroup@0
