@@ -86,7 +86,7 @@ stages:
               IISDeploymentType: 'IISWebsite'
               ActionIISWebsite: 'StartWebsite'
               StartStopWebsiteName: 'dev.WeatherForecast'
-              
+
 - stage: DeployToQA
   displayName: QA
   jobs:
@@ -129,3 +129,46 @@ stages:
               IISDeploymentType: 'IISWebsite'
               ActionIISWebsite: 'StartWebsite'
               StartStopWebsiteName: 'qa.WeatherForecast'
+              
+- stage: DeployToProd
+  displayName: Prod
+  jobs:
+  - deployment: deploymentJob
+    displayName: Deployment job
+    environment:
+      name: Prod
+      resourceType: VirtualMachine
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: IISWebAppManagementOnMachineGroup@0
+            inputs:
+              IISDeploymentType: 'IISWebsite'
+              ActionIISWebsite: 'CreateOrUpdateWebsite'
+              WebsiteName: 'WeatherForecast'
+              websitePhysicalPath: '%SystemDrive%\Sites\$(projectName)'
+              AddBinding: true
+              bindings: '{"bindings":[{"protocol":"http","ipAddress":"All Unassigned","port":"80","hostname":"www.$(projectName).pt","sslThumbprint":"","sniFlag":false}]}'
+              WebsitePhysicalPathAuth: 'WebsiteUserPassThrough'
+              CreateOrUpdateAppPoolForWebsite: true
+              AppPoolNameForWebsite: 'WeatherForecast'
+              DotNetVersionForWebsite: 'v4.0'
+              PipeLineModeForWebsite: 'Integrated'
+              AppPoolIdentityForWebsite: 'ApplicationPoolIdentity'
+          - task: IISWebAppManagementOnMachineGroup@0
+            inputs:
+              IISDeploymentType: 'IISWebsite'
+              ActionIISWebsite: 'StopWebsite'
+              StartStopWebsiteName: 'WeatherForecast'
+          - task: IISWebAppDeploymentOnMachineGroup@0
+            inputs:
+              WebSiteName: 'WeatherForecast'
+              Package: '$(pipeline.workspace)\**\*.zip'
+              RemoveAdditionalFilesFlag: true
+              TakeAppOfflineFlag: true
+          - task: IISWebAppManagementOnMachineGroup@0
+            inputs:
+              IISDeploymentType: 'IISWebsite'
+              ActionIISWebsite: 'StartWebsite'
+              StartStopWebsiteName: 'WeatherForecast'
