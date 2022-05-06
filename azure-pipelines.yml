@@ -59,13 +59,13 @@ stages:
             inputs:
               IISDeploymentType: 'IISWebsite'
               ActionIISWebsite: 'CreateOrUpdateWebsite'
-              WebsiteName: 'WeatherForecast'
+              WebsiteName: 'dev.WeatherForecast'
               websitePhysicalPath: '%SystemDrive%\Sites\dev.$(projectName)'
               AddBinding: true
               bindings: '{"bindings":[{"protocol":"http","ipAddress":"All Unassigned","port":"80","hostname":"www.dev.$(projectName).pt","sslThumbprint":"","sniFlag":false}]}'
               WebsitePhysicalPathAuth: 'WebsiteUserPassThrough'
               CreateOrUpdateAppPoolForWebsite: true
-              AppPoolNameForWebsite: 'WeatherForecast'
+              AppPoolNameForWebsite: 'dev.WeatherForecast'
               DotNetVersionForWebsite: 'v4.0'
               PipeLineModeForWebsite: 'Integrated'
               AppPoolIdentityForWebsite: 'ApplicationPoolIdentity'
@@ -73,10 +73,10 @@ stages:
             inputs:
               IISDeploymentType: 'IISWebsite'
               ActionIISWebsite: 'StopWebsite'
-              StartStopWebsiteName: 'WeatherForecast'
+              StartStopWebsiteName: 'dev.WeatherForecast'
           - task: IISWebAppDeploymentOnMachineGroup@0
             inputs:
-              WebSiteName: 'WeatherForecast'
+              WebSiteName: 'dev.WeatherForecast'
               Package: '$(pipeline.workspace)\**\*.zip'
               RemoveAdditionalFilesFlag: true
               TakeAppOfflineFlag: true
@@ -84,4 +84,4 @@ stages:
             inputs:
               IISDeploymentType: 'IISWebsite'
               ActionIISWebsite: 'StartWebsite'
-              StartStopWebsiteName: 'WeatherForecast'
+              StartStopWebsiteName: 'dev.WeatherForecast'
