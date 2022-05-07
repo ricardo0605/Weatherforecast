@@ -79,7 +79,7 @@ stages:
           - task: IISWebAppDeploymentOnMachineGroup@0
             inputs:
               WebSiteName: 'dev.WeatherForecast'
-              Package: '$(pipeline.workspace)\**\*.zip'
+              Package: '$(pipeline.workspace)\**\WeatherForecast.zip'
               RemoveAdditionalFilesFlag: true
               TakeAppOfflineFlag: true
               JSONFiles: '**/appsettings.json'
