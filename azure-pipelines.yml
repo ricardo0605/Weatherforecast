@@ -97,6 +97,8 @@ stages:
     environment:
       name: QA
       resourceType: VirtualMachine
+    variables:
+      ConnectionStrings.DefaultConnection: $(qaConnectionString)
     strategy:
       runOnce:
         deploy:
@@ -141,6 +143,8 @@ stages:
     environment:
       name: Prod
       resourceType: VirtualMachine
+    variables:
+      ConnectionStrings.DefaultConnection: $(prodConnectionString)
     strategy:
       runOnce:
         deploy:
@@ -149,13 +153,13 @@ stages:
             inputs:
               IISDeploymentType: 'IISWebsite'
               ActionIISWebsite: 'CreateOrUpdateWebsite'
-              WebsiteName: 'WeatherForecast'
+              WebsiteName: '$(projectName)'
               websitePhysicalPath: '%SystemDrive%\Sites\$(projectName)'
               AddBinding: true
               bindings: '{"bindings":[{"protocol":"http","ipAddress":"All Unassigned","port":"80","hostname":"www.$(projectName).pt","sslThumbprint":"","sniFlag":false}]}'
               WebsitePhysicalPathAuth: 'WebsiteUserPassThrough'
               CreateOrUpdateAppPoolForWebsite: true
-              AppPoolNameForWebsite: 'WeatherForecast'
+              AppPoolNameForWebsite: '$(projectName)'
               DotNetVersionForWebsite: 'v4.0'
               PipeLineModeForWebsite: 'Integrated'
               AppPoolIdentityForWebsite: 'ApplicationPoolIdentity'
@@ -163,15 +167,15 @@ stages:
             inputs:
               IISDeploymentType: 'IISWebsite'
               ActionIISWebsite: 'StopWebsite'
-              StartStopWebsiteName: 'WeatherForecast'
+              StartStopWebsiteName: '$(projectName)'
           - task: IISWebAppDeploymentOnMachineGroup@0
             inputs:
-              WebSiteName: 'WeatherForecast'
-              Package: '$(pipeline.workspace)\**\*.zip'
+              WebSiteName: '$(projectName)'
+              Package: '$(pipeline.workspace)\**\$(projectName).zip'
               RemoveAdditionalFilesFlag: true
               TakeAppOfflineFlag: true
           - task: IISWebAppManagementOnMachineGroup@0
             inputs:
               IISDeploymentType: 'IISWebsite'
               ActionIISWebsite: 'StartWebsite'
-              StartStopWebsiteName: 'WeatherForecast'
+              StartStopWebsiteName: '$(projectName)'
