@@ -45,8 +45,6 @@ stages:
 
 - stage: DeployToDev
   displayName: Dev
-  variables:
-    ConnectionStrings.DefaultConnection: $(devConnectionString)
   jobs:
   - deployment: deploymentJob
     displayName: Deployment job
@@ -90,8 +88,6 @@ stages:
 
 - stage: DeployToQA
   displayName: QA
-  variables:
-    ConnectionStrings.DefaultConnection: $(qaConnectionString)
   jobs:
   - deployment: deploymentJob
     displayName: Deployment job
@@ -135,8 +131,6 @@ stages:
               
 - stage: DeployToProd
   displayName: Prod
-  variables:
-    ConnectionStrings.DefaultConnection: $(prodConnectionString)
   jobs:
   - deployment: deploymentJob
     displayName: Deployment job
