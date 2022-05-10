@@ -8,9 +8,7 @@ trigger:
 - none
 
 pool:
-#  name: Azure Pipelines
-#  name: environment-42-641b15df-d624-4664-897e-7ac663e74ca4
-  name: Dev
+  name: Azure Pipelines
   
 variables:
   projectName: WeatherForecast
@@ -59,7 +57,6 @@ stages:
 
 - template: dotNetCore/DeployWebSiteOnIIS.yml@yamlTemplates
   parameters:
-    # environment: Development
     environment: Dev
     webSiteName: dev.WheatherForecast
     websitePhysicalPath: '%SystemDrive%\Sites\dev.$(projectName)'
@@ -72,18 +69,17 @@ stages:
     dotNetVersionForWebsite: 'v4.0'
     pipeLineModeForWebsite: 'Integrated'
   
-#- template: dotNetCore/DeployWebSiteOnIIS.yml@yamlTemplates
-#  parameters:
-    #environment: Staging
-#    environment: Dev
-#    webSiteName: staging.WheatherForecast
-#    websitePhysicalPath: '%SystemDrive%\Sites\staging.$(projectName)'
-#    bindings: '{"bindings":[{"protocol":"http","ipAddress":"All Unassigned","port":"80","hostname":"www.staging.$(projectName).pt","sslThumbprint":"","sniFlag":false}]}'
-#    appPoolNameForWebsite: staging.WheatherForecast
-#    removeAdditionalFilesFlag: true
-#    takeAppOfflineFlag: true
-#    addBinding: true
-#    createOrUpdateAppPool: true
-#    dotNetVersionForWebsite: 'v4.0'
-#    pipeLineModeForWebsite: 'Integrated'
+- template: dotNetCore/DeployWebSiteOnIIS.yml@yamlTemplates
+  parameters:
+    environment: QA
+    webSiteName: qa.WheatherForecast
+    websitePhysicalPath: '%SystemDrive%\Sites\qa.$(projectName)'
+    bindings: '{"bindings":[{"protocol":"http","ipAddress":"All Unassigned","port":"80","hostname":"www.qa.$(projectName).pt","sslThumbprint":"","sniFlag":false}]}'
+    appPoolNameForWebsite: qa.WheatherForecast
+    removeAdditionalFilesFlag: true
+    takeAppOfflineFlag: true
+    addBinding: true
+    createOrUpdateAppPool: true
+    dotNetVersionForWebsite: 'v4.0'
+    pipeLineModeForWebsite: 'Integrated'
   
