@@ -58,10 +58,10 @@ stages:
 - template: dotNetCore/DeployWebSiteOnIIS.yml@yamlTemplates
   parameters:
     environment: Dev
-    webSiteName: dev.WheatherForecast
+    webSiteName: dev.$(projectName)
     websitePhysicalPath: '%SystemDrive%\Sites\dev.$(projectName)'
     bindings: '{"bindings":[{"protocol":"http","ipAddress":"All Unassigned","port":"80","hostname":"www.dev.$(projectName).pt","sslThumbprint":"","sniFlag":false}]}'
-    appPoolNameForWebsite: dev.WheatherForecast
+    appPoolNameForWebsite: dev.$(projectName)
     removeAdditionalFilesFlag: true
     takeAppOfflineFlag: true
     addBinding: true
@@ -72,10 +72,24 @@ stages:
 - template: dotNetCore/DeployWebSiteOnIIS.yml@yamlTemplates
   parameters:
     environment: QA
-    webSiteName: qa.WheatherForecast
+    webSiteName: qa.$(projectName)
     websitePhysicalPath: '%SystemDrive%\Sites\qa.$(projectName)'
     bindings: '{"bindings":[{"protocol":"http","ipAddress":"All Unassigned","port":"80","hostname":"www.qa.$(projectName).pt","sslThumbprint":"","sniFlag":false}]}'
-    appPoolNameForWebsite: qa.WheatherForecast
+    appPoolNameForWebsite: qa.$(projectName)
+    removeAdditionalFilesFlag: true
+    takeAppOfflineFlag: true
+    addBinding: true
+    createOrUpdateAppPool: true
+    dotNetVersionForWebsite: 'v4.0'
+    pipeLineModeForWebsite: 'Integrated'
+
+- template: dotNetCore/DeployWebSiteOnIIS.yml@yamlTemplates
+  parameters:
+    environment: Prod
+    webSiteName: $(projectName)
+    websitePhysicalPath: '%SystemDrive%\Sites\$(projectName)'
+    bindings: '{"bindings":[{"protocol":"http","ipAddress":"All Unassigned","port":"80","hostname":"www.$(projectName).pt","sslThumbprint":"","sniFlag":false}]}'
+    appPoolNameForWebsite: $(projectName)
     removeAdditionalFilesFlag: true
     takeAppOfflineFlag: true
     addBinding: true
