@@ -15,12 +15,6 @@ stages:
     displayName: Build stage
     steps:
     - task: DotNetCoreCLI@2
-      displayName: Test
-      inputs:
-        command: test
-        projects: '**/*[Tt]ests/*.csproj'
-        arguments: '--configuration $(BuildConfiguration)'
-    - task: DotNetCoreCLI@2
       displayName: Restore
       inputs:
         command: restore
@@ -29,6 +23,12 @@ stages:
       displayName: Build
       inputs:
         projects: '**/*.csproj'
+        arguments: '--configuration $(BuildConfiguration)'
+    - task: DotNetCoreCLI@2
+      displayName: Test
+      inputs:
+        command: test
+        projects: '**/*[Tt]ests/*.csproj'
         arguments: '--configuration $(BuildConfiguration)'
     - task: DotNetCoreCLI@2
       displayName: Publish
